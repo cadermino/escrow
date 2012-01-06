@@ -1,0 +1,451 @@
+<?php
+
+function escrow_menu() {
+    $items = array();
+    $items['comprar'] = array(
+        'title' => 'Realizar Compra',
+        'page callback' => 'drupal_get_form', //'escrow_form',
+        'page arguments' => array('escrow_form'),
+        'access callback' => 'user_access',
+        'access arguments' => array('escrow access'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'escrow-admin.inc',
+    );
+    $items['comprar/pagar'] = array(
+        'title' => 'pagar',
+        'page callback' => 'drupal_get_form', //'escrow_form',
+        'page arguments' => array('pagar_form'),
+        'access callback' => 'user_access',
+        'access arguments' => array('escrow access'),
+    );
+    $items['comprar/conformidad'] = array(
+        'title' => 'conformidad',
+        'page callback' => 'drupal_get_form', //'escrow_form',
+        'page arguments' => array('conformidad_compra_form'),
+        'access callback' => 'user_access',
+        'access arguments' => array('escrow access'),
+    );
+    $items['ventas pendientes'] = array(
+        'title' => 'Ventas pendientes',
+        'page callback' => 'drupal_get_form', //'escrow_form',
+        'page arguments' => array('muestra_ventas'),
+        'access callback' => 'user_access',
+        'access arguments' => array('venta access'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'escrow-admin.inc',
+    );
+    $items['ventas pendientes/codigo de envio'] = array(
+        'title' => 'ingresar codigo de envio',
+        'page callback' => 'drupal_get_form', //'escrow_form',
+        'page arguments' => array('codigo_envio_form'),
+        'access callback' => 'user_access',
+        'access arguments' => array('venta access'),
+    );
+    return $items;
+}
+
+function codigo_envio_form($form_state) {
+    global $user;
+    //$result=db_query("SELECT * FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    $result = db_query("SELECT e.eid,e.veid,e.created= date('d-m-y H:i'),u.name,e.producto,e.cantidad,e.precio,e.total FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    //$veid=db_result(db_query("SELECT veid FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+    while ($users = db_fetch_array($result)) {
+        if ($user->uid == $users['veid']) {
+            $checkboxes[$users['eid']] = '';
+            $form[$users['eid']]['fecha'] = array
+                (
+                '#value' => $users['created'] ,
+            );
+
+            $form[$users['eid']]['comprador'] = array
+                (
+                '#value' => $users['name'],
+            );
+            $form[$users['eid']]['producto'] = array
+                (
+                '#value' => $users['producto'],
+            );
+            $form[$users['eid']]['cantidad'] = array
+                (
+                '#value' => $users['cantidad'],
+            );
+            $form[$users['eid']]['precio'] = array
+                (
+                '#value' => $users['precio'],
+            );
+            $form[$users['eid']]['total'] = array
+                (
+                '#value' => $users['total'],
+            );
+        }
+    }
+
+    $form['checkboxes'] = array
+        (
+        '#type' => 'checkboxes',
+        '#options' => $checkboxes,
+    );
+    $form['#theme'] = 'my_form_theme';
+    $form['aceptar'] = array(
+        '#type' => 'submit',
+        '#value' => 'Aceptar',
+    );
+    return $form;
+}
+
+function conformidad_compra_form($form_state) {
+    global $user;
+    //$result=db_query("SELECT * FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    $result = db_query("SELECT e.eid,e.veid,e.created,u.name,e.producto,e.cantidad,e.precio,e.total FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    //$veid=db_result(db_query("SELECT veid FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+    while ($users = db_fetch_array($result)) {
+        if ($user->uid == $users['veid']) {
+            $checkboxes[$users['eid']] = '';
+            $form[$users['eid']]['fecha'] = array
+                (
+                '#value' => $users['created'] = date('d-m-y H:i'),);
+
+            $form[$users['eid']]['comprador'] = array
+                (
+                '#value' => $users['name'],
+            );
+            $form[$users['eid']]['producto'] = array
+                (
+                '#value' => $users['producto'],
+            );
+            $form[$users['eid']]['cantidad'] = array
+                (
+                '#value' => $users['cantidad'],
+            );
+            $form[$users['eid']]['precio'] = array
+                (
+                '#value' => $users['precio'],
+            );
+            $form[$users['eid']]['total'] = array
+                (
+                '#value' => $users['total'],
+            );
+        }
+    }
+
+    $form['checkboxes'] = array
+        (
+        '#type' => 'checkboxes',
+        '#options' => $checkboxes,
+    );
+    $form['#theme'] = 'my_form_theme';
+    $form['aceptar'] = array(
+        '#type' => 'submit',
+        '#value' => 'Aceptar',
+    );
+    return $form;
+}
+
+function pagar_form($form_state) {
+    global $user;
+    //$result=db_query("SELECT * FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    $result = db_query("SELECT e.eid,e.veid,e.created,u.name,e.producto,e.cantidad,e.precio,e.total FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    //$veid=db_result(db_query("SELECT veid FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+    while ($users = db_fetch_array($result)) {
+        if ($user->uid == $users['veid']) {
+            $checkboxes[$users['eid']] = '';
+            $form[$users['eid']]['fecha'] = array
+                (
+                '#value' => $users['created'] = date('d-m-y H:i'),);
+
+            $form[$users['eid']]['comprador'] = array
+                (
+                '#value' => $users['name'],
+            );
+            $form[$users['eid']]['producto'] = array
+                (
+                '#value' => $users['producto'],
+            );
+            $form[$users['eid']]['cantidad'] = array
+                (
+                '#value' => $users['cantidad'],
+            );
+            $form[$users['eid']]['precio'] = array
+                (
+                '#value' => $users['precio'],
+            );
+            $form[$users['eid']]['total'] = array
+                (
+                '#value' => $users['total'],
+            );
+        }
+    }
+
+    $form['checkboxes'] = array
+        (
+        '#type' => 'checkboxes',
+        '#options' => $checkboxes,
+    );
+    $form['#theme'] = 'my_form_theme';
+    $form['aceptar'] = array(
+        '#type' => 'submit',
+        '#value' => 'Aceptar',
+    );
+    return $form;
+}
+
+function muestra_ventas($form_state) {
+    global $user;
+    //$result=db_query("SELECT * FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    $result = db_query("SELECT e.eid,e.veid,e.created,u.name,e.producto,e.cantidad,e.precio,e.total,e.aceptado FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+    //$veid=db_result(db_query("SELECT veid FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+    while ($users = db_fetch_array($result)) {
+        if ($user->uid == $users['veid'] && $users['aceptado'] == 0) {
+            $checkboxes[$users['eid']] = '';
+            $form[$users['eid']]['fecha'] = array
+                (
+                '#value' => $users['created'] = getdate(created),
+            );
+
+            $form[$users['eid']]['comprador'] = array
+                (
+                '#value' => $users['name'],
+            );
+            $form[$users['eid']]['producto'] = array
+                (
+                '#value' => $users['producto'],
+            );
+            $form[$users['eid']]['cantidad'] = array
+                (
+                '#value' => $users['cantidad'],
+            );
+            $form[$users['eid']]['precio'] = array
+                (
+                '#value' => $users['precio'],
+            );
+            $form[$users['eid']]['total'] = array
+                (
+                '#value' => $users['total'],
+            );
+            $form[$users['eid']]['mail'] = array
+                (
+                '#value' => $users['mail'],
+            );
+        }
+    }
+
+    $form['checkboxes'] = array
+        (
+        '#type' => 'checkboxes',
+        '#options' => $checkboxes,
+        '#default_value' => mail,
+    );
+    $form['#theme'] = 'my_form_theme';
+    $form['aceptar'] = array(
+        '#type' => 'submit',
+        '#value' => 'Aceptar',
+    );
+    return $form;
+}
+
+function escrow_theme() {
+    return array
+        (
+        'my_form_theme' => array
+            (
+            'arguments' => array('form' => NULL),
+        ),
+    );
+}
+
+function theme_my_form_theme($form) {
+    $rows = array();
+
+    foreach (element_children($form['checkboxes']) as $uid) {
+        $row = array();
+        $row[] = drupal_render($form['checkboxes'][$uid]);
+        $row[] = drupal_render($form[$uid]['fecha']);
+        $row[] = drupal_render($form[$uid]['comprador']);
+        $row[] = drupal_render($form[$uid]['producto']);
+        $row[] = drupal_render($form[$uid]['cantidad']);
+        $row[] = drupal_render($form[$uid]['precio']);
+        $row[] = drupal_render($form[$uid]['total']);
+        $rows[] = $row;
+    }
+
+    if (count($rows)) {
+        $header = array(theme('table_select_header_cell'), t('fecha'), t('comprador'), t('producto'), t('cantidad'), t('precio'), t('total'));
+    } else {
+        $header = array(t('fecha'), t('comprador'), t('producto'), t('cantidad'), t('precio'), t('total'));
+        $row = array();
+        $row[] = array
+            (
+            'data' => t('No tiene ventas pendientes'),
+            'colspan' => 6,
+            'style' => 'text-align:center',
+        );
+        $rows[] = $row;
+    }
+
+    $output = theme('table', $header, $rows);
+    return $output . drupal_render($form);
+}
+
+/**
+  Implementation of hook_perm().
+ */
+function escrow_perm() {
+    return array('escrow access', 'venta access');
+}
+
+function escrow_form(&$form_state) {
+    $form['comprar'] = array(
+        '#title' => 'Datos del producto',
+        '#type' => 'fieldset',
+        '#description' => 'Ingresa el email del vendedor y los Datos del Producto',
+    );
+    $form['comprar']['direccion'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Dirección a la que desea que llegue el producto',
+        '#required' => TRUE,
+    );
+    $form['comprar']['mail'] = array(
+        '#type' => 'textfield',
+        '#title' => 'e-mail del vendedor o tienda virtual',
+        '#required' => TRUE,
+    );
+
+    $form['comprar']['producto'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Nombre de Producto',
+        '#required' => TRUE,
+    );
+
+    $form['comprar']['cantidad'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Cantidad',
+        '#required' => TRUE,
+    );
+
+    $form['comprar']['precio'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Precio $',
+        '#required' => TRUE,
+    );
+    $form['comprar']['aceptar'] = array(
+        '#type' => 'submit',
+        '#value' => 'Aceptar',
+    );
+    return $form;
+}
+
+function escrow_mail($key, &$message, $params) {
+    $message['subject'] = $params['subject'];
+    $message['body'] = $params['body'];
+
+    $headers = array(
+        'MIME-Version' => '1.0',
+        'Content-Type' => 'text/html; charset=UTF-8; format=flowed',
+        'Content-Transfer-Encoding' => '8Bit',
+        'X-Mailer' => 'Drupal'
+    );
+
+    foreach ($headers as $key => $value) {
+        $message['headers'][$key] = $value;
+    }
+}
+
+function escrow_form_submit($form, $form_state) {
+    global $user;
+    $total = 0.00000;
+    $dir = $form_state['values']['direccion'];
+    $eid = $form_state['values']['eid'];
+    $email_vend = $form_state['values']['mail'];
+    $prod = $form_state['values']['producto'];
+    $cant = $form_state['values']['cantidad'];
+    $precio = $form_state['values']['precio'];
+    $total = $cant * $precio;
+    $vendedor = '';
+    $veid = db_result(db_query("SELECT veid FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+    $coid = db_result(db_query("SELECT c.coid FROM {comprador} c INNER JOIN {escrow} e ON c.coid=e.coid"));
+    $vendedor = db_result(db_query("SELECT email_vend FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+//ingresa a la tabla comprador
+    db_query("INSERT INTO {comprador} (coid,direccion) VALUES (%d,'%s')", $user->uid, $dir);
+    db_query("UPDATE {comprador} SET direccion='%s' WHERE coid=%d", $dir, $user->uid);
+    db_query('SELECT * from {escrow}');
+    if ($email_vend == $vendedor) {
+        db_query("INSERT INTO {escrow} (eid, coid, veid, producto, cantidad, precio, total, created) VALUES
+        (%d, %d, %d, '%s', %d, %f, %f, %d)", $eid, $user->uid, $veid, $prod, $cant, $precio, $total, time());
+        //envia email
+        $mailto = $email_vend;
+        $mailfrom = 'sender@domain.com';
+        $subject = "Otra Compra Online";
+        $message = "Tenga un buen dia, el usuario $user->name desea realizar una compra mediante un sistema escrow, para esto debe ingresar a la direccion: http://localhost/drupal_escrow";
+        drupal_mail('escrow', 'reply', $mailto, language_default(), array('body' => $message, 'subject' => $subject), $mailfrom, TRUE);
+        //Actualizar la tabla usuarios
+        db_query('SELECT * from {users}');
+        //Actualizar la tabla escrow
+        db_query('SELECT * from {escrow}');
+    } else {
+        //crea nuevo vendedor
+        include_once 'includes/bootstrap.inc';
+        drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+        $pass_no = user_password();
+        $name_user = user_password();
+        $pass = md5($pass_no);
+        $mail = $email_vend;
+        $status = 1;
+        db_query("INSERT INTO {users} (name, pass, mail, status, created, access)
+        VALUES ('%s', '%s', '%s', %d, %d, %d)", $name_user, $pass, $mail, $status, time(), time());
+        //envio de email a vendedor con sus datos.
+        $mailto = $email_vend;
+        $mailfrom = 'sender@domain.com';
+        $subject = "Compra Online";
+        $message = "Tenga un buen dia, el usuario $user->name desea realizar una compra mediante un sistema escrow, para esto debe ingresar  el usuario:
+                    $name_user password $pass_no a la direccion: http://localhost/drupal_escrow";
+        drupal_mail('escrow', 'reply', $mailto, language_default(), array('body' => $message, 'subject' => $subject), $mailfrom, TRUE);
+        //Actualizar la tabla usuarios
+        db_query('SELECT * from {users}');
+        //ingresa rol
+        $uid = db_result(db_query("SELECT uid FROM {users} WHERE mail='%s'", $email_vend));
+        db_query('SELECT * from {users}');
+        db_query("INSERT INTO {users_roles} (uid, rid) VALUES (%d, %d)", $uid, 4);
+        //ingresa a tabla escrow
+        db_query("INSERT INTO {escrow} (eid, coid, veid, producto, cantidad, precio, total, created) VALUES
+        (%d, %d, %d, '%s', %d, %f, %f, %d)", $eid, $user->uid, $uid, $prod, $cant, $precio, $total, time());
+        //ingresa vendedor
+        db_query("INSERT INTO {vendedor} (veid, email_vend) VALUES (%d, '%s')", $uid, $email_vend);
+    }
+//imprime en pantalla.
+    drupal_set_message(t('Su transaccion ha sido procesada. Espere a que el vendedor la acepte, el precio total es %total', array('%total' => $total)));
+}
+
+function muestra_ventas_submit($form, $form_state) {
+
+/////////////////////////////////////////////////////////////////////////////////////////
+    $names = array();
+    $checked_boxes = array(); //this will hold the value for each of the checkboxes that has been checked
+    foreach ($form_state['values']['checkboxes'] as $checkbox) { // $form_state['values'] holds the all the submited form values
+        if ($checkbox > 0) { // non-checked checkboxes have a value of zero. Checked checkboxes hold the value of the checkbox. In this case, I gave all the checkboxes a numerical value, so I only need to check if the value is greater than zero to see if the box was checked. If a text value is given, you will need to check to see if the value is equal to the text value for the checkbox
+            $checked_boxes[] = $checkbox;
+        }
+    }
+    //$name=db_result(db_query("SELECT name FROM {users} "));
+    //$result=db_result(db_query("SELECT u.mail FROM {users} u INNER JOIN {users_roles} r ON email_vend='%s'", $email_vend));
+    foreach ($checked_boxes as $checked_box) {
+        global $user;
+        //$result=db_query("SELECT * FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+        $result = db_query("SELECT e.eid,e.veid,e.created,u.name,e.producto,e.cantidad,e.precio,e.total,e.aceptado FROM {escrow} e INNER JOIN {users} u ON e.coid=u.uid");
+        //$veid=db_result(db_query("SELECT veid FROM {vendedor} WHERE email_vend='%s'", $email_vend));
+        while ($users = db_fetch_array($result)) {
+            if ($user->uid == $users['veid'] && $users['aceptado'] == 0) {
+                $email=db_result(db_query("SELECT mail FROM {users} u INNER JOIN {escrow} e ON u.uid=e.coid"));
+                $name = $checked_box['name'];
+                //$mail = db_result(db_query("SELECT mail FROM {users} WHERE name='%s'", $name));
+                //$mailto = $mail;
+                $mailfrom = 'sender@domain.com';
+                $subject = "Compra Online";
+                $message = "Tenga un buen dia, tiene pedidos pendientes por pagar, debe dirigirse a escrow para realizar el pago de los productos";
+                drupal_mail('escrow', 'reply', $mailto, language_default(), array('body' => $message, 'subject' => $subject), $mailfrom, TRUE);
+
+                
+            }
+        }
+    }
+    drupal_set_message(t('es %total', array('%total' => $email)));
+}

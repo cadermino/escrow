@@ -1,0 +1,27 @@
+<?php
+function venta_menu() {
+//$items = array();
+
+$items['ventas pendientes'] = array(
+'title' => 'pruebas',
+'page callback' => 'drupal_get_form',//'escrow_form',
+'page arguments' => array('venta_form'),
+'access callback' => 'user_access',
+'access arguments' => array('venta access'),
+'type' => MENU_NORMAL_ITEM,
+'file' => 'escrow-admin.inc',
+);
+return $items;
+}
+function venta_form(&$form_state){
+   $type = 'blog';
+$status = 1; // In the node table, a status of 1 means published.
+$sql = "SELECT * FROM {node} WHERE type = '%s' AND status = %d";
+$result = db_query(db_rewrite_sql($sql), $type, $status);
+while ($data = db_fetch_object($result)) {
+$node = node_load($data->nid);
+print node_view($node, TRUE);
+} 
+} 
+
+

@@ -1,0 +1,10 @@
+name = Agente Escrow
+description = Modulo encargado de gestionar el comercio electronico.
+package = Escrow
+version = VERSION
+core = 6.x
+
+; Information added by drupal.org packaging script on 2010-12-15
+version = "6.x-1.0"
+project = "Escoww"
+datestamp = "1292447788"

@@ -1,0 +1,138 @@
+<?php
+// $Id
+
+/**
+ *
+ * instalacion del schema para la db escrow.
+ * 
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function escrow_install() {
+  drupal_install_schema('escrow');
+  }
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function escrow_uninstall() {
+  drupal_uninstall_schema('escrow');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function escrow_schema() {
+  $schema['escrow'] = array(
+    'description' => 'tabla escrow',
+    'fields' => array(
+      'eid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'El id para la compra.',
+          ),
+      'coid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'usuario que hizo la compra',
+          ),
+      'veid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'usuario que hizo la compra',
+          ),
+      'producto' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'productos',
+      ),
+      'cantidad' => array(
+        'type' => 'int',
+        'length' => 11,
+        'not null' => TRUE,
+        'description' => 'cantidad',
+      ),
+      'precio' => array(
+        'description' => 'precio del producto.',
+        'type' => 'numeric',
+        'precision' => 16,
+        'scale' => 5,
+        'not null' => TRUE,
+        'default' => 0.0,
+       ),
+      'total' => array(
+        'description' => 'Monto total a pagar.',
+        'type' => 'numeric',
+        'precision' => 16,
+        'scale' => 5,
+        'not null' => TRUE,
+        'default' => 0.0,
+       ),
+      'aceptado' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'si la peticion de venta fue aceptada(1) o todavia no(0).',
+       ),
+      'pagado' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'si el vendedor realizo el pago(1) o no(0).',
+       ), 
+      'created' => array(
+        'description' => 'A Unix timestamp indicating when the annotation was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+       ),
+    ),
+    'primary key' => array('eid','coid','veid'),
+    
+  );
+  $schema['vendedor'] = array(
+    'description' => 'tabla vendedor',
+    'fields' => array(
+      'veid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'El id de vendedor.',
+          ),
+      'email_vend' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'email del vendedor.',
+	  ),  
+    ),
+    'primary key' => array('veid'),
+    
+  );
+  $schema['comprador'] = array(
+    'description' => 'tabla comprador',
+    'fields' => array(
+      'coid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'El id para la compra.',
+          ),
+      'direccion' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'direccion del comprador',
+          ), 
+    ),
+    'primary key' => array('coid'),
+    
+  );
+  return $schema;
+
+}
